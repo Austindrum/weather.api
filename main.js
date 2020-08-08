@@ -7,6 +7,8 @@ var vm = new Vue({
             locationWeatherData: null,
             locationName: '',
             cityWeatherData: null,
+            oceanData: [],
+            oceanDataDetail: [],
         }
     },
     methods: {
@@ -16,7 +18,7 @@ var vm = new Vue({
                 res.data.records.location.forEach(location => {
                     let locationObj = {
                         name: location.locationName,
-                        img: `./accest/img/${location.locationName}.jpg`
+                        img: `./accest/img/city/${location.locationName}.jpg`
                     }
                     this.locations.push(locationObj);
                 });
@@ -176,10 +178,21 @@ var vm = new Vue({
             // this.weatherAnalysis(this.cityWeatherData.weatherElement);
             this.togglePage = "cityWeather";
             $('#myModal').modal('toggle');
+        },
+        getOceanData(){
+            axios.get("https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0018-001?Authorization=CWB-418C5921-689A-4793-A78B-7D3027C772CD")
+            .then(res=>{
+                this.oceanData = res.data.records.location;
+            })
+        },
+        getOceanDataDetail(id){
+            this.togglePage = 'observeDetail';
+            this.oceanData.forEach(data=>{
+                if(data.stationId == id){
+                    this.oceanDataDetail = data;
+                }
+            })
         }
-    },
-    computed: {
-        
     },
     created() {
         this.getLocations();
@@ -195,6 +208,7 @@ document.getElementById("toogle-page").addEventListener("click", e=>{
             break;
         case 2:
             vm.togglePage = 'observe'
+            vm.getOceanData();
             break;
         case 3:
             vm.togglePage = 'earthquake&'

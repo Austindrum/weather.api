@@ -20,6 +20,16 @@ body{
 .card-title{
     vertical-align: middle;
 }
+.ocean{
+    background-color: #FFFAF0;
+    width: 220px;
+    cursor: pointer;
+    transition: all .5s;
+}
+.ocean:hover{
+    background-color: darkgray;
+    color: white;
+}
 /* .card-img{
     opacity: .4;
     transition: all .5s;
