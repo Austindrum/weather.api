@@ -1,0 +1,103 @@
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css" integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX" crossorigin="anonymous">
+        <link rel="stylesheet" href="./style.css">
+
+        <!-- Font Awesome -->
+        <script src="https://kit.fontawesome.com/519608a1bc.js" crossorigin="anonymous"></script>
+        <title>Weather</title>
+    </head>
+    <body>
+        <div class="content mt-0">
+            <header class="bg-secondary text-white rounded-bottom">
+                <h1 class="text-center p-4 font-weight-bold">全台天氣預報</h1>
+            </header>
+            <nav>
+                <ul class="select-list list-group list-group-horizontal d-flex justify-content-around mt-4" id="toogle-page">
+                    <li class="p-3 m-2 h5 rounded-lg" data-id="1">各縣市天氣預報</li>
+                    <li class="p-3 m-2 h5 rounded-lg" data-id="2">氣象觀測</li>
+                    <li class="p-3 m-2 h5 rounded-lg" data-id="3">地震海嘯</li>
+                    <li class="p-3 m-2 h5 rounded-lg" data-id="4">氣候</li>
+                </ul>
+            </nav>
+            <hr>
+            <main style="height: 140%">
+                <div id="app" class="mt-4">
+                    <!-- 縣市鄉鎮 modal -->
+                    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModal" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="myModal">{{ locationName }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <button
+                                        class="btn btn-primary m-1" 
+                                        v-for="location in locationWeatherData" 
+                                        @click="getCityWeather(location.geocode)">{{ location.locationName }}</button>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 所有縣市 -->
+                    <div class="d-flex justify-content-start flex-wrap m-auto location" v-if="togglePage == 'weather'">
+                        <div v-for="location in locations"
+                            class="card m-1 city" 
+                            style="width: 232px;"
+                            @click="getLocationWeather(location.name)">
+                            <img :src="location.img" class="card-img" style="height: 100%;">
+                            <div class="card-img-overlay">
+                                <h4 class="card-title mt-3 ml-3">{{ location.name }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 鄉鎮訊息 -->
+                    <div class="" v-if="togglePage == 'cityWeather'">
+                        <div class="d-flex p-3">
+                            <h3>
+                                {{ locationName }} - 
+                                <span class="h5">{{ cityWeatherData.locationName }}</span>
+                            </h3>
+                            <select class="custom-select w-25 ml-4" @change="cityWeatherTypeSelect">
+                                <option disabled selected>請選擇....</option>
+                                <option v-for="type in cityWeatherData.weatherElement" :value="type.elementName" v-if="type.elementName !== 'WeatherDescription'">{{ type.description }}</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="myChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <footer class="fixed-bottom content bg-secondary mb-0 p-4 pb-0 rounded-top text-white  mt-5">
+                <ul class="p-0 m-0 d-flex">
+                    <li>
+                        <a href="https://github.com/Austindrum"><i class="fab fa-github fa-2x"></i></a>
+                    </li>
+                    <li style="right: 100px">
+                        <a href="https://austindrum.github.io/homepage/"><i class="fas fa-globe fa-2x"></i></a>
+                    </li>
+                </ul>
+                <h5 class="text-center m-0">Copyright&#169; 2020 Austin</h5>
+                <p class="p-0 m-0 mt-2 text-center h6">僅提供免費查詢及作品展示，不另做商業用途</p>
+            </footer>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js" integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg==" crossorigin="anonymous"></script>
+        <script src="./main.js"></script>
+    </body>
+</html>
