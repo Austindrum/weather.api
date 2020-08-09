@@ -12,21 +12,21 @@
         <title>Weather</title>
     </head>
     <body>
-        <div class="content mt-0">
+        <!-- <div class="content mt-0"> -->
             <header class="bg-secondary text-white rounded-bottom">
-                <h1 class="text-center p-4 font-weight-bold">臺灣氣候預報 <span class="h6 text-warning font-weight-bold">V 1.0</span></h1>
+                <h1 class="text-center p-4 mb-0 font-weight-bold">臺灣氣候預報 <span class="h6 text-warning font-weight-bold">V 1.0</span></h1>
+                <nav>
+                    <ul class="select-list list-group list-group-horizontal d-flex justify-content-around" id="toogle-page">
+                        <li class="p-3 m-2 h5 rounded-lg" data-id="1">各縣市天氣預報</li>
+                        <li class="p-3 m-2 h5 rounded-lg" data-id="2">海相觀測</li>
+                        <li class="p-3 m-2 h5 rounded-lg" data-id="3">近期地震</li>
+                        <li class="p-3 m-2 h5 rounded-lg" data-id="4">雨量統計</li>
+                    </ul>
+                </nav>
             </header>
-            <nav>
-                <ul class="select-list list-group list-group-horizontal d-flex justify-content-around mt-4" id="toogle-page">
-                    <li class="p-3 m-2 h5 rounded-lg" data-id="1">各縣市天氣預報</li>
-                    <li class="p-3 m-2 h5 rounded-lg" data-id="2">海相觀測</li>
-                    <li class="p-3 m-2 h5 rounded-lg" data-id="3">近期地震</li>
-                    <li class="p-3 m-2 h5 rounded-lg" data-id="4">雨量統計</li>
-                </ul>
-            </nav>
-            <hr>
-            <main style="height: 140%">
-                <div id="app" class="mt-4">
+            <!-- style="height: 180%" -->
+            <main class="p-4" style="height: 180%">
+                <div id="app" class="">
                     <!-- 縣市鄉鎮 modal -->
                     <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModal" aria-hidden="true">
                         <div class="modal-dialog">
@@ -50,14 +50,70 @@
                         </div>
                     </div>
                     <!-- 所有縣市 -->
-                    <div class="d-flex justify-content-start flex-wrap m-auto location" v-if="togglePage == 'weather'">
-                        <div v-for="location in locations"
-                            class="card m-1 city" 
-                            style="width: 232px;"
-                            @click="getLocationWeather(location.name)">
-                            <img :src="location.img" class="card-img" style="height: 100%;">
-                            <div class="card-img-overlay">
-                                <h4 class="card-title mt-3 ml-3">{{ location.name }}</h4>
+                    <div v-if="togglePage == 'weather'" class="">
+                        <h3 class="font-weight-bold">北部</h3>
+                        <div class="d-flex justify-content-start flex-wrap m-auto location">
+                            <div v-for="location in locations"
+                                v-if="location.diraction == 'N'"
+                                class="card m-1 city" 
+                                style="width: 232px;"
+                                @click="getLocationWeather(location.name)">
+                                <img :src="location.img" class="card-img" style="height: 100%;">
+                                <div class="card-img-overlay">
+                                    <h4 class="card-title mt-3 ml-3">{{ location.name }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="font-weight-bold">中部</h3>
+                        <div class="d-flex justify-content-start flex-wrap m-auto location">
+                            <div v-for="location in locations"
+                                v-if="location.diraction == 'M'"
+                                class="card m-1 city" 
+                                style="width: 232px;"
+                                @click="getLocationWeather(location.name)">
+                                <img :src="location.img" class="card-img" style="height: 100%;">
+                                <div class="card-img-overlay">
+                                    <h4 class="card-title mt-3 ml-3">{{ location.name }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="font-weight-bold">南部</h3>
+                        <div class="d-flex justify-content-start flex-wrap m-auto location">
+                            <div v-for="location in locations"
+                                v-if="location.diraction == 'S'"
+                                class="card m-1 city" 
+                                style="width: 232px;"
+                                @click="getLocationWeather(location.name)">
+                                <img :src="location.img" class="card-img" style="height: 100%;">
+                                <div class="card-img-overlay">
+                                    <h4 class="card-title mt-3 ml-3">{{ location.name }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="font-weight-bold">東部</h3>
+                        <div class="d-flex justify-content-start flex-wrap m-auto location">
+                            <div v-for="location in locations"
+                                v-if="location.diraction == 'E'"
+                                class="card m-1 city" 
+                                style="width: 232px;"
+                                @click="getLocationWeather(location.name)">
+                                <img :src="location.img" class="card-img" style="height: 100%;">
+                                <div class="card-img-overlay">
+                                    <h4 class="card-title mt-3 ml-3">{{ location.name }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="font-weight-bold">外島</h3>
+                        <div class="d-flex justify-content-start flex-wrap m-auto location">
+                            <div v-for="location in locations"
+                                v-if="location.diraction == 'A'"
+                                class="card m-1 city" 
+                                style="width: 232px;"
+                                @click="getLocationWeather(location.name)">
+                                <img :src="location.img" class="card-img" style="height: 100%;">
+                                <div class="card-img-overlay">
+                                    <h4 class="card-title mt-3 ml-3">{{ location.name }}</h4>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -129,13 +185,14 @@
                     <div v-if= "togglePage == 'rain'">
                         <h1>2020 全臺各區雨量統計</h1>
                         <h4>自今年 1 月起統計全臺總雨量: <span class="text-primary ml-2">{{ rainData.totalRain }} mm</span></h4>
-                        <div class="chart-container" style="height: 900px;">
+                        <div class="chart-container" style="height: 1000px;">
                             <canvas id="rainChart"></canvas>
                         </div>
                     </div>
                 </div>
             </main>
-            <footer class="fixed-bottom content bg-secondary mb-0 p-4 pb-0 rounded-top text-white  mt-5">
+            <!-- fixed-bottom  -->
+            <footer class="fixed-bottom content bg-secondary p-4 pb-0 rounded-top text-white">
                 <ul class="p-0 m-0 d-flex">
                     <li>
                         <a href="https://github.com/Austindrum"><i class="fab fa-github fa-2x"></i></a>
@@ -147,7 +204,7 @@
                 <h5 class="text-center m-0">Copyright&#169; 2020 Austin</h5>
                 <p class="p-0 m-0 mt-2 text-center h6">僅提供免費查詢及作品展示，不另做商業用途</p>
             </footer>
-        </div>
+        <!-- </div> -->
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js" integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J" crossorigin="anonymous"></script>

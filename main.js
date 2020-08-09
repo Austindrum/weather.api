@@ -18,9 +18,44 @@ var vm = new Vue({
             axios.get("https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-418C5921-689A-4793-A78B-7D3027C772CD")
             .then(res=>{
                 res.data.records.location.forEach(location => {
+                    let diraction = "";
+                    if(
+                        location.locationName == "基隆市" ||
+                        location.locationName == "臺北市" ||
+                        location.locationName == "新北市" ||
+                        location.locationName == "桃園市" ||
+                        location.locationName == "新竹市" ||
+                        location.locationName == "新竹縣" ||
+                        location.locationName == "苗栗縣"
+                    ){
+                        diraction = "N"
+                    }else if(
+                        location.locationName == "臺中市" ||
+                        location.locationName == "彰化縣" ||
+                        location.locationName == "雲林縣" ||
+                        location.locationName == "嘉義縣" ||
+                        location.locationName == "嘉義市"
+                    ){
+                        diraction = "M"
+                    }else if(
+                        location.locationName == "臺南市" ||
+                        location.locationName == "高雄市" ||
+                        location.locationName == "屏東縣"
+                    ){
+                        diraction = "S"
+                    }else if(
+                        location.locationName == "宜蘭縣" ||
+                        location.locationName == "花蓮縣" ||
+                        location.locationName == "臺東縣"
+                    ){
+                        diraction = "E"
+                    }else{
+                        diraction = "A"
+                    }
                     let locationObj = {
                         name: location.locationName,
-                        img: `./accest/img/city/${location.locationName}.jpg`
+                        img: `./accest/img/city/${location.locationName}.jpg`,
+                        diraction, 
                     }
                     this.locations.push(locationObj);
                 });
@@ -128,7 +163,7 @@ var vm = new Vue({
                         labels: data.map(time=> {
                             let startTime = new Date(time.startTime);
                             let endTime = new Date(time.endTime);
-                            return `${startTime.getMonth() + 1}/${startTime.getDate()}-${startTime.getHours()}:00~${endTime.getMonth() + 1}/${endTime.getDate() + 1}-${endTime.getHours()}:00`;
+                            return `${startTime.getMonth() + 1}/${startTime.getDate()}-${startTime.getHours()}~${endTime.getMonth() + 1}/${endTime.getDate() + 1}-${endTime.getHours()}`;
                         }),
                         datasets: [{
                             // label: '# of Votes',
@@ -227,11 +262,11 @@ var vm = new Vue({
         },
         getOceanData(){
             axios.get("https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0018-001?Authorization=CWB-418C5921-689A-4793-A78B-7D3027C772CD")
-            .then(res=>{               
+            .then(res=>{              
+                console.log(res);
                 res.data.records.location.forEach(location=>{
                     let tempTime = [];
                     location.time.forEach(time=>{
-                        // console.log(time.obsTime);
                         tempTime.push(time);
                     })
                     tempTime.sort((a, b)=>{
