@@ -115,11 +115,6 @@ var vm = new Vue({
                 if(status.elementName == e.target.value){
                     status.time.forEach(time=>{
                         tempData.push(time);
-                        // console.log(time);
-                        // console.log(`${time.elementValue[0].value} ${time.elementValue[0].measures}`);
-                        // console.log('start', time.startTime, new Date(time.startTime).getDay());
-                        // console.log('end  ',time.endTime, new Date(time.endTime).getDay());
-                        // console.log('=================================');
                     })
                 }
             });
@@ -136,7 +131,7 @@ var vm = new Vue({
                             return `${startTime.getMonth() + 1}/${startTime.getDate()}-${startTime.getHours()}:00~${endTime.getMonth() + 1}/${endTime.getDate() + 1}-${endTime.getHours()}:00`;
                         }),
                         datasets: [{
-                            label: '# of Votes',
+                            // label: '# of Votes',
                             data: data.map(time=>{
                                 return parseInt(time.elementValue[0].value)
                             }),
@@ -232,7 +227,18 @@ var vm = new Vue({
         },
         getOceanData(){
             axios.get("https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0018-001?Authorization=CWB-418C5921-689A-4793-A78B-7D3027C772CD")
-            .then(res=>{
+            .then(res=>{               
+                res.data.records.location.forEach(location=>{
+                    let tempTime = [];
+                    location.time.forEach(time=>{
+                        // console.log(time.obsTime);
+                        tempTime.push(time);
+                    })
+                    tempTime.sort((a, b)=>{
+                        return new Date(a.obsTime).getTime() - new Date(b.obsTime).getTime();
+                    })
+                    location.time = tempTime
+                })
                 this.oceanData = res.data.records.location;
             })
         },
