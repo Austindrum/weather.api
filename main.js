@@ -9,6 +9,8 @@ var vm = new Vue({
             cityWeatherData: null,
             oceanData: [],
             oceanDataDetail: [],
+            earthquakeData: {},
+            rainData:[]
         }
     },
     methods: {
@@ -124,50 +126,99 @@ var vm = new Vue({
             this.setChart(tempData);
         },
         setChart(data){
-            var myChart = new Chart(document.getElementById('myChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: data.map(time=> {
-                        let startTime = new Date(time.startTime);
-                        let endTime = new Date(time.endTime);
-                        return `${startTime.getMonth() + 1}/${startTime.getDate()}-${startTime.getHours()}:00~${endTime.getMonth() + 1}/${endTime.getDate() + 1}-${endTime.getHours()}:00`;
-                    }),
-                    datasets: [{
-                        label: '# of Votes',
-                        data: data.map(time=>{
-                            return parseInt(time.elementValue[0].value)
+            if(this.togglePage == "cityWeather"){
+                var myChart = new Chart(document.getElementById('weatherChart').getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: data.map(time=> {
+                            let startTime = new Date(time.startTime);
+                            let endTime = new Date(time.endTime);
+                            return `${startTime.getMonth() + 1}/${startTime.getDate()}-${startTime.getHours()}:00~${endTime.getMonth() + 1}/${endTime.getDate() + 1}-${endTime.getHours()}:00`;
                         }),
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
+                        datasets: [{
+                            label: '# of Votes',
+                            data: data.map(time=>{
+                                return parseInt(time.elementValue[0].value)
+                            }),
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 3
                         }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
                     }
-                }
-            });
+                });
+            }
+            if(this.togglePage == "rain"){
+                var myChart = new Chart(document.getElementById('rainChart').getContext('2d'), {
+                    type: 'horizontalBar',
+                    data: {
+                        labels: data.map(location=> {
+                            return location.station;
+                        }),
+                        datasets: [{
+                            label: 'mm',
+                            data: data.map(location=>{
+                                return location.data;
+                            }),
+                            backgroundColor: [
+                                // 'rgba(255, 99, 132, 0.2)',
+                                // 'rgba(54, 162, 235, 0.2)',
+                                // 'rgba(255, 206, 86, 0.2)',
+                                // 'rgba(75, 192, 192, 0.2)',
+                                // 'rgba(153, 102, 255, 0.2)',
+                                // 'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                // 'rgba(255, 99, 132, 1)',
+                                // 'rgba(54, 162, 235, 1)',
+                                // 'rgba(255, 206, 86, 1)',
+                                // 'rgba(75, 192, 192, 1)',
+                                // 'rgba(153, 102, 255, 1)',
+                                // 'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }],
+                            xAxes:[{
+                                barPercentage: 0.4
+                            }]
+                        }
+                    }
+                });
+            }
         },
         getCityWeather(cityId){
             this.locationWeatherData.forEach(city=>{
@@ -192,6 +243,35 @@ var vm = new Vue({
                     this.oceanDataDetail = data;
                 }
             })
+        },
+        getEarthquakeData(){
+            axios.get("https://opendata.cwb.gov.tw/api/v1/rest/datastore/E-A0015-001?Authorization=CWB-418C5921-689A-4793-A78B-7D3027C772CD")
+            .then(res=>{
+                this.earthquakeData = res.data.records.earthquake[0].reportImageURI;
+            })
+        },
+        getRainData(){
+            axios.get("https://opendata.cwb.gov.tw/api/v1/rest/datastore/C-B0025-001?Authorization=CWB-418C5921-689A-4793-A78B-7D3027C772CD")
+            .then(res=>{
+                let totalRain = 0;
+                let tempObj = [];
+                res.data.records.location.forEach((station, key)=>{
+                    let locationRain = 0;
+                    station.stationObsTimes.stationObsTime.forEach(rain=>{
+                        if(!isNaN(parseInt(rain.weatherElements.precipitation))){
+                            locationRain += parseInt(rain.weatherElements.precipitation);
+                        }
+                    })
+                    totalRain += locationRain;
+                    tempObj.push({
+                        station: station.station.stationName,
+                        data: locationRain
+                    })
+                })
+                tempObj['totalRain'] = totalRain;
+                this.rainData = tempObj;
+                this.setChart(this.rainData);
+            })
         }
     },
     created() {
@@ -211,10 +291,12 @@ document.getElementById("toogle-page").addEventListener("click", e=>{
             vm.getOceanData();
             break;
         case 3:
-            vm.togglePage = 'earthquake&'
+            vm.togglePage = 'earthquake'
+            vm.getEarthquakeData();
             break; 
         default:
-            vm.togglePage= 'climate'
+            vm.togglePage= 'rain'
+            vm.getRainData();
             break;
     };
 })
